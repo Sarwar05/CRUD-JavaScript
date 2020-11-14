@@ -1,4 +1,5 @@
 # CRUD-JavaScript
+![ screenshot of entry list](/docs/Capture.PNG)
 
 ### Motivation
 After learning Basics of HTML, CSS and Javascript, I wanted to use my acquired knowledge to build a simple webpage which includes Create, Read, Update and Delete operation.
