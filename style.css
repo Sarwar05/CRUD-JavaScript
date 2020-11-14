@@ -1,0 +1,87 @@
+/* table content decoration */
+table, th, td{
+    border: 1px solid black;
+}
+table{
+    /* margin-left: auto;
+    margin-right: auto; */
+    margin: 1em auto;
+}
+caption{
+    color: rgb(189, 40, 40);
+}
+th, td{
+    text-align: center;
+    vertical-align: auto;
+    padding: 10px;
+    /* border-bottom: 1px solid black; */
+}
+tr{
+    font-family: 'Courier New', Courier, monospace;
+    background-color: tomato;
+}
+tr:nth-child(even){
+    background-color: rgb(212, 212, 210);
+}
+tr:hover{
+    background-color: cadetblue;
+}
+table{
+    border-collapse: collapse;
+    align-items: center;
+    height: 50px;
+}
+/* initoial buton decoration */
+.nav{
+    text-align: center;
+}
+.in{
+    border: 2px solid crimson;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 2px;
+    background-color: rgb(195, 240, 240);
+    width: 80px;
+    font-weight: bolder;
+}
+.in:hover{
+    background-color: rgb(109, 221, 109);
+}
+/* input form decoration */
+#form{
+    box-sizing: border-box;
+    text-align: center;
+}
+#form input{
+    background-color: rosybrown;
+    padding: 10px;
+    border-color: rgb(190, 153, 224);
+}
+#form input:hover{
+    background-color:rgb(209, 206, 206);
+}
+#form .button{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    background-color:rgb(60, 134, 134);
+}
+#form .button:hover{
+    background-color: silver;
+}
+/* header decoration */
+body{
+    background: skyblue;
+}
+.header{
+    color: rgb(101, 85, 145);
+    text-align: center;
+    background: rgb(149, 182, 149);
+    /* font-size: 50px; */
+}
+/* footer decoration */
+#foot{
+    padding: 20px;
+    background-color: #ddd;
+    color: rgb(228, 18, 18);
+    text-align: center;
+}
