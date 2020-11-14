@@ -1,24 +1,32 @@
 /// Field definition
 class Info{
     constructor(){
-        this.firstName="";
-        this.LastName="";
-        this.phoneNo="";
-        this.email="";
-        this.majorCourse="";
+        this["First Name"]="";
+        this["Last Name"]="";
+        this["Phone No."]="";
+        this["Email"]="";
+        this["Course 1"]="";
+        this["Course 2"]="";
+        this["Course 3"]="";
         this.Id = "";
     }
 }
+
 /// Field definition END
 /// helper function below
 
 //create html element
-function createDOMElement(dTag, dType, dId, dValue)
+function createDOMElement(divTag, divType, divId, divValue, useValue)
 {   
-    let newElem = document.createElement(dTag);
-    newElem.type = dType;
-    newElem.id = dId;
-    newElem.value = dValue;
+    let newElem = document.createElement(divTag);
+    newElem.type = divType;
+    newElem.id = divId;
+    if(useValue){
+        newElem.value = divValue;
+    }
+    else{
+        newElem.placeholder = divValue;
+    }
     let newDiv = document.createElement("div");
     newDiv.className = "temp";
     newDiv.appendChild(newElem);
@@ -49,7 +57,7 @@ function checkValidity(entry)
         if(data==""){
             return alertValidation(`${property}: Empty Field!`);
         }
-        if(property=="firstName" || property=="LastName"){
+        if(property=="First Name" || property=="Last Name"){
             let up = data.toUpperCase();
             let dow = data.toLowerCase();
             for(let i=data.length-1; i>=0; i--){
@@ -59,7 +67,7 @@ function checkValidity(entry)
                 }
             }
         }
-        if(property=="phoneNo"){
+        if(property=="Phone No."){
             if(data!=data.toUpperCase() || data!=data.toLowerCase() ){
                 return alertValidation("Invalid character in phone number");
             }
@@ -67,7 +75,7 @@ function checkValidity(entry)
                 return alertValidation("Phone number length is not valid");
             }
         }
-        if(property=="email"){
+        if(property=="Email"){
             let idx =  data.indexOf("@");
             if(data.lastIndexOf("@")!=idx || data.includes("#")|| data.includes("$")){
                 return alertValidation("invalid email");
@@ -87,24 +95,24 @@ function retriveData(key)
     for(let property in entry){  
         if(property=="Id") continue;      
         entry[property] = document.getElementById(property).value;
-        // if(entry[property]==""){
-        //     alert(`${property}: Empty Field!`);
-        // }
     }
-    deleteDomField();
     if(checkValidity(entry)){
+        deleteDomField();
         entry.Id = (key) ? key : createNewId();
         localStorage.setItem(entry.Id, JSON.stringify(entry));
+        markShowAllEntry();
+    }
+    else{
     }
 }
 /// update created html elements
-function updateDOMField(entry, key){
+function updateDOMField(entry, key,exist){
     let form = document.getElementById("form");
     for(let property in entry){
         if(property=="Id") continue;
-        form.appendChild( createDOMElement("input", "text", property, entry[property]));
+        form.appendChild( createDOMElement("input", "text", property, entry[property],exist));
     }
-    form.appendChild( createDOMElement("input","button","btn","Submit"));    
+    form.appendChild( createDOMElement("input","button","btn","Submit",true));    
     let sub = document.getElementById("btn");
     btn.className = "button";///
     sub.addEventListener("click",()=>{
@@ -122,7 +130,7 @@ function createNewEntry(exist){
     }
     let id = null;
     if(exist) id = exist.Id;   
-    updateDOMField(entry, id);    
+    updateDOMField(entry, id,exist);    
 }
 /// create an id for this user
 let globalId = -1;
@@ -143,12 +151,12 @@ function inputId(reason){
     let newField = document.createElement("input");
     newField.type = "text";
     newField.id = "search";
-    newField.value = msg;
+    newField.placeholder  = msg;
     form.appendChild(newField);
     newField = document.createElement("input");
     newField.type = "button";
     newField.className = "button";
-    newField.value = "Submit";
+    newField.value = reason;
     newField.id = "btn";
     form.appendChild(newField);
 }
@@ -156,24 +164,37 @@ function inputId(reason){
 function showDataInTable(entryList)
 {
     let table = document.getElementById("output");
-    let cap = document.createElement("caption");
     let h2 = document.createElement("h2");
     h2.textContent = "Student List";
+    let cap = document.createElement("caption");
     cap.appendChild(h2);
     table.appendChild(cap);
     let tr = document.createElement("tr");
     let testEntry = new Info();
+    let spanSize = 0;
     for(let prop in testEntry){
         let th = document.createElement("th");
         th.textContent = prop;
         tr.appendChild(th);
+        spanSize++;
     }
     tr.className = "row";
     table.appendChild(tr);
+    if(entryList.length==0){
+        tr = document.createElement("tr");
+        testEntry.className = "data";
+        let td = document.createElement("td");
+        td.colSpan = spanSize;
+        td.textContent = "No Data Found";
+        tr.appendChild(td);
+        table.appendChild(tr);
+        return;
+    }
     for(let i=0; i<entryList.length; i++){
         tr = document.createElement("tr");
         testEntry.className = "data";
         for(let prop in entryList[i]){
+            if(testEntry[prop]) continue;
             let td = document.createElement("td");
             td.textContent = entryList[i][prop];
             tr.appendChild(td);
@@ -212,7 +233,7 @@ function showAllEntry()
 }
 function updateExistingEntry()
 {
-    inputId("update");
+    inputId("Update");
     let btn = document.getElementById("btn");
     btn.addEventListener("click",()=>{
         let id = document.getElementById("search").value;
@@ -220,6 +241,7 @@ function updateExistingEntry()
         let data = localStorage.getItem(id);
         if(data==null){
             alertInvalidId();
+            updateExistingEntry();
         }
         else{
             data = JSON.parse(data);
@@ -230,29 +252,33 @@ function updateExistingEntry()
 }
 function deleteExistingEntry()
 {
-    inputId("delete");
+    inputId("Delete");
     let btn = document.getElementById("btn");
     btn.addEventListener("click",()=>{
         let id = document.getElementById("search").value;
         deleteDomField();
         if(localStorage.getItem(id)==null){
             alertInvalidId();
+            deleteExistingEntry();
         }
         else {
-            if(confirm(`Are you sure to delete Id: ${id}`))
+            if(confirm(`Are you sure to delete Id: ${id}`)){
                 localStorage.removeItem(id);
+            }
+            markShowAllEntry();   
         }
     });
 }
 function findAnEntry()
 {
-    inputId("find");
+    inputId("Find");
     let btn = document.getElementById("btn");
     btn.addEventListener("click",()=>{
         let id = document.getElementById("search").value;
         deleteDomField();
         if(localStorage.getItem(id)==null){
             alertInvalidId();
+            findAnEntry();
         }
         else{
             let data = localStorage.getItem(id);
@@ -260,6 +286,11 @@ function findAnEntry()
             showDataInTable([data]);
         }
     });
+}
+
+function markShowAllEntry()
+{
+    showAllEntry();
 }
 /// main functions to perform button action END
 /// call event function for each button
@@ -293,4 +324,5 @@ let nav = document.querySelector(".nav");
 for(let i=0; i<nav.children.length; i++){
     nav.children[i].addEventListener("click", addEventToButton);
 }
+markShowAllEntry();
 /// main code ends here 
